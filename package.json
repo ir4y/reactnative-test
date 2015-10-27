@@ -1,0 +1,13 @@
+{
+  "name": "AwesomeProject",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh"
+  },
+  "dependencies": {
+    "baobab": "^2.1.0",
+    "baobab-react": "^1.0.0",
+    "react-native": "^0.13.1"
+  }
+}
