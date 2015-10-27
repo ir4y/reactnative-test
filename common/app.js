@@ -1,55 +1,32 @@
 import React from 'react-native';
 import {RootMixin, SchemaBranchMixin} from './mixins';
-import Movies from "./movie";
+import MovieList from "./movie";
+import Main from  "./main";
 
 var {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
+  Navigator,
 } = React;
-
-var inc = a => a + 1;
-var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
 var App = React.createClass({
   mixins: [SchemaBranchMixin],
   schema: {
-    hello: 'Hello',
-    counter: 0,
-    movies: [],
-    page: ''
+    main: {},
+    catalog: {},
   },
-  componentDidMount: function() {
-    (async() => {
-      let response = await fetch(REQUEST_URL);
-      let data = await response.json();
-      this.cursors.movies.set(data.movies);
-    })();
+  renderScene: function(route, nav) {
+    switch(route.page){
+      case "M": return <Main nav={nav} tree={this.cursors.main} />
+      case "ML": return <MovieList nav={nav} tree={this.catalog} />
+    }
   },
   render: function() {
-    if(this.state.page == 'ML'){
-      return <Movies />
-    } else {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.welcome}>
-            {this.state.hello}
-            Movies count: {this.state.movies.length}
-          </Text>
-
-          <TouchableOpacity onPress={() => this.cursors.page.set('ML')}>
-            <Text>Open Movies list</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => this.cursors.counter.apply(inc)}>
-            <Text>
-              Counter: {this.state.counter}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    return <Navigator
+      initialRoute={{page: "M" }}
+      renderScene={this.renderScene}  />
   }
 });
 

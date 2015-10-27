@@ -9,37 +9,39 @@ var {
   ListView,
 } = React;
 
-var MovieList =  React.createClass({
-  getInitialState: function() {
-  var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.id !== r2.id});
-    return {
-      dataSource: ds.cloneWithRows(this.props.movies),
-    };
+var MovieList = React.createClass({
+  mixins: [SchemaBranchMixin],
+  schema:{
+    total: 0,
+    movies: []
   },
-
   render: function() {
-      return (
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Text>{rowData.title}</Text>}
-        />
-        );
+    return <View>
+      <Text>{this.state.total}</Text>
+  </View>
   }
 });
+
+var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
 
 export default React.createClass({
   mixins: [SchemaBranchMixin],
   schema: {
-    page: '',
-    movies: [],
+    moviesData: {movies:[]}
+  },
+  componentDidMount: function() {
+      (async() => {
+        let response = await fetch(REQUEST_URL);
+        let data = await response.json();
+        this.cursors.moviesData.set(data);
+      })();
   },
   render: function() {
     return <View>
-      <TouchableOpacity onPress={() => this.cursors.page.set('main')}>
+      <TouchableOpacity onPress={() => this.props.nav.push({page: 'M'})}>
         <Text>Back</Text>
       </TouchableOpacity>
-      <MovieList movies={this.state.movies} />
+      <MovieList tree={this.cursors.moviesData} />
     </View>
   }
 });
-
